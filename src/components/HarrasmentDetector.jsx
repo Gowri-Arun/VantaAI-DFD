@@ -1,11 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Paperclip, Send, Shield, AlertTriangle, Info, X, LogIn, XCircle } from 'lucide-react';
-
-// Import Firestore functions
 import { firestore } from '../firebase';
 import { collection, addDoc, onSnapshot, query, orderBy, serverTimestamp } from 'firebase/firestore';
-
-// Import Storage functions for image uploads
 import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage';
 
 const analyzeMessageForHarassment = (message) => {
@@ -20,16 +16,16 @@ const analyzeMessageForHarassment = (message) => {
     let confidence = 0;
     let category = 'safe';
     if (containsHarassment) {
-        confidence = Math.random() * 0.15 + 0.85; // 85-100%
+        confidence = Math.random() * 0.15 + 0.85;
         category = 'harassment';
     } else if (containsFlirting) {
-        confidence = Math.random() * 0.25 + 0.65; // 65-90%
+        confidence = Math.random() * 0.25 + 0.65;
         category = 'inappropriate';
     } else if (containsAggression) {
-        confidence = Math.random() * 0.3 + 0.7; // 70-100%
+        confidence = Math.random() * 0.3 + 0.7;
         category = 'aggressive';
     } else {
-        confidence = Math.random() * 0.15 + 0.05; // 5-20% risk (safe)
+        confidence = Math.random() * 0.15 + 0.05;
         isHarmful = false;
     }
     return { isHarmful, confidence, category, score: Math.round(confidence * 100) };
@@ -65,7 +61,15 @@ const HarassmentDetector = () => {
                 const messageData = doc.data();
                 if (messageData.room === room) {
                     const isCurrentUser = messageData.sender === username;
-                    const analysis = messageData.message ? analyzeMessageForHarassment(messageData.message) : messageData.analysis;
+
+                    // --- THIS IS THE IMPROVED LOGIC ---
+                    // Prioritize the AI's image analysis from the backend.
+                    let analysis = messageData.analysis; 
+                    // If there's no image analysis (e.g., text-only message), run our local text analysis.
+                    if (!analysis && messageData.message) {
+                        analysis = analyzeMessageForHarassment(messageData.message);
+                    }
+                    // --- END OF IMPROVEMENT ---
 
                     newMessages.push({
                         id: doc.id,
@@ -117,6 +121,9 @@ const HarassmentDetector = () => {
         if (fileInputRef.current) fileInputRef.current.value = null;
         setIsUploading(false);
     };
+    
+    // ... All other helper functions and the JSX return block are identical to the previous version ...
+    // I am including them all below so you can copy the entire file.
 
     const handleImageSelect = (e) => {
         const file = e.target.files[0];
