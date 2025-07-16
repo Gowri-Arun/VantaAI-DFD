@@ -1,15 +1,13 @@
-// Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
-// You probably have this line for the core app
-// You are likely MISSING this line for the database
-import { getDatabase } from 'firebase/database';
 
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+
+import { initializeApp } from 'firebase/app';
+// REMOVE or keep the line below, we won't be using it for the chat
+import { getDatabase } from 'firebase/database';
+// ADD this line for Firestore
+import { getFirestore } from 'firebase/firestore';
+
 const firebaseConfig = {
+  // ... your config keys ...
   apiKey: "AIzaSyD8DCOwWFYMvTbJ53g0lnUlCCNWdU9gZZk",
   authDomain: "vantaai-69cd3.firebaseapp.com",
   databaseURL: "https://vantaai-69cd3-default-rtdb.asia-southeast1.firebasedatabase.app",
@@ -20,8 +18,10 @@ const firebaseConfig = {
   measurementId: "G-NJ0KRRP1J5"
 };
 
-// Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
 
-export const db = getDatabase(app);
+// Keep this line if you use Realtime DB elsewhere, otherwise it can be removed
+export const db = getDatabase(app); 
+
+// ADD this line to export the Firestore instance
+export const firestore = getFirestore(app);
