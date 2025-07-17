@@ -13,12 +13,12 @@ function LegalSupportScreen() {
         <p style={styles.subtext}>Access legal resources and expert guidance.</p>
 
         <div style={styles.grid}>
-          <Link to="/LegalChatbot" style={{ ...styles.card, backgroundColor: '#eef2f9' }}>
+          <Link to="/LegalChatInterface" style={{ ...styles.card, backgroundColor: '#eef2f9' }}>
             <div style={styles.cardIcon}>
               <Bot size={24} color="#303f9f" />
             </div>
-            <h3 style={styles.cardTitle}>Legal Chatbot</h3>
-            <p style={styles.cardText}>Ask legal questions in a safe, anonymous chat.</p>
+            <h3 style={styles.cardTitle}>Legal Chatbot and FIR Generator</h3>
+            <p style={styles.cardText}>Ask legal questions in a safe, anonymous chat and generate FIRs.</p>
           </Link>
 
           <Link to="/KnowYourRightsHub" style={{ ...styles.card, backgroundColor: '#f3e5f5' }}>
