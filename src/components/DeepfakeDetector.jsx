@@ -1,6 +1,6 @@
 import React from 'react';
 
-function DeepfakeDetection() {
+function DeepfakeDetector() {
   return (
     <div style={{ padding: '20px' }}>
       <h2> Deepfake Detection</h2>
@@ -8,4 +8,4 @@ function DeepfakeDetection() {
   );
 }
 
-export default DeepfakeDetection;
+export default DeepfakeDetector;
