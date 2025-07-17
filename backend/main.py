@@ -1,25 +1,50 @@
-from fastapi import FastAPI, UploadFile, File
+from fastapi import FastAPI, File, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
+from transformers import AutoImageProcessor, SiglipForImageClassification
+from PIL import Image
+import io
+import torch
 import requests
 
 app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5178"],  # Replace with specific frontend URL in production
+    allow_origins=["https://vanta-ai-eight.vercel.app","http://localhost:5173"],  # Change to frontend domain in production
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# Replace with your actual SerpAPI key
-SERPAPI_KEY = "062b122798af0f5049dcc1a946fc077752f90d0fc0c12247accd0d236a0fc20b"
+# Load deepfake detection model
+model_name = "prithivMLmods/deepfake-detector-model-v1"
+model = SiglipForImageClassification.from_pretrained(model_name)
+processor = AutoImageProcessor.from_pretrained(model_name)
+
+# SerpAPI key for reverse search
+SERPAPI_KEY = "062b122798af0f5049dcc1a946fc077752f90d0fc0c12247accd0d236a0fc20b"  # Replace with actual key
+
+@app.post("/analyze")
+async def analyze_image(file: UploadFile = File(...)):
+    image = Image.open(io.BytesIO(await file.read())).convert("RGB")
+    inputs = processor(images=image, return_tensors="pt")
+    with torch.no_grad():
+        outputs = model(**inputs)
+        probs = torch.nn.functional.softmax(outputs.logits, dim=1).squeeze().tolist()
+
+    is_deepfake = probs[0] > probs[1]
+    confidence = max(probs)
+
+    return {
+        "isDeepfake": is_deepfake,
+        "confidence": round(confidence, 3),
+        "details": "Deepfake detected with high probability." if is_deepfake else "Image appears to be authentic."
+    }
 
 @app.post("/scan-image")
 async def scan_image(image: UploadFile = File(...)):
     try:
         image_bytes = await image.read()
-
         url = "https://serpapi.com/search"
         params = {
             "engine": "google_lens",
@@ -53,7 +78,7 @@ async def scan_image(image: UploadFile = File(...)):
                 "url": m.get("link")
             })
 
-        return { "matches": matches }
+        return {"matches": matches}
 
     except Exception as e:
-        return { "matches": [], "error": str(e) }
+        return {"matches": [], "error": str(e)}

@@ -10,9 +10,9 @@ function DetectScreen() {
         <p style={styles.subtext}>AI tools to uncover and analyze image-based threats.</p>
 
         <div style={styles.grid}>
-          <Link to="/DeepfakeDetection" style={{ ...styles.card, backgroundColor: '#f3e8ff' }}>
+          <Link to="/DeepfakeDetector" style={{ ...styles.card, backgroundColor: '#f3e8ff' }}>
             <h3 style={styles.cardTitle}>Deepfake Detection</h3>
-            <p style={styles.cardText}>AI to spot facial manipulation and video tampering.</p>
+            <p style={styles.cardText}>AI to spot deepfake image detection.</p>
           </Link>
 
           <Link to="/ImageScanning" style={{ ...styles.card, backgroundColor: '#dbf4ff' }}>
