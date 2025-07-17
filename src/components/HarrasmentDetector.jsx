@@ -2,13 +2,12 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { Paperclip, Send, Shield, AlertTriangle, Info, X, LogIn, XCircle } from 'lucide-react';
-// CORRECTED: Importing 'firestore' from the single, master config file
-import { firestore } from '../firebase-config';
+// This now correctly points to its own separate firebase config
+import { firestore } from '../firebase';
 import { collection, addDoc, onSnapshot, query, orderBy, serverTimestamp } from 'firebase/firestore';
 import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage';
 
 const analyzeMessageForHarassment = (message) => {
-    // This local analysis logic remains the same
     const harassmentKeywords = ['stupid', 'ugly', 'hate', 'kill', 'die', 'idiot', 'loser', 'dumb', 'worthless', 'disgusting', 'pathetic'];
     const flirtingKeywords = ['beautiful', 'sexy', 'hot', 'gorgeous', 'pretty', 'attractive', 'cute', 'sweet'];
     const aggressiveKeywords = ['shut up', 'go away', 'leave me alone', 'annoying', 'fuck', 'damn', 'shit'];
@@ -35,6 +34,8 @@ const analyzeMessageForHarassment = (message) => {
     return { isHarmful, confidence, category, score: Math.round(confidence * 100) };
 };
 
+// The rest of the HarassmentDetector component code is identical to what you provided.
+// No other changes are needed in this file.
 const HarassmentDetector = () => {
     const [username, setUsername] = useState('');
     const [room, setRoom] = useState('');
@@ -97,8 +98,6 @@ const HarassmentDetector = () => {
         let imageUrl = null;
 
         if (hasImage) {
-            // NOTE: This initializes storage on-the-fly, which is fine.
-            // It uses the default app instance we already configured.
             const storage = getStorage();
             const imagePath = `images/${room}/${Date.now()}_${imageFile.name}`;
             const imageStorageRef = storageRef(storage, imagePath);
@@ -121,8 +120,6 @@ const HarassmentDetector = () => {
         if (fileInputRef.current) fileInputRef.current.value = null;
         setIsUploading(false);
     };
-    
-    // ... all other functions (handleImageSelect, joinRoom, etc.) are identical
     
     const handleImageSelect = (e) => {
         const file = e.target.files[0];
@@ -176,7 +173,6 @@ const HarassmentDetector = () => {
         setWarningMessage(null);
     };
 
-    // ... The entire JSX return block is identical to what you provided ...
     if (!joinedChat) {
         return (
             <div style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif', height: '100vh', width: '100%', maxWidth: '400px', margin: '0 auto', display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '24px', background: 'linear-gradient(180deg, #E8D5FF 0%, #F0E9FF 25%, #E0E7FF 50%, #DBEAFE 75%, #E8D5FF 100%)' }}>

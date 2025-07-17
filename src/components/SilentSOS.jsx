@@ -1,20 +1,13 @@
 // src/components/SilentSOS.jsx
 
 import React, { useState, useEffect, useRef } from 'react';
-// CORRECTED: Importing 'firestore' for consistency with the rest of the app
-import { auth, firestore, storage } from '../firebase-config';
-import { signInAnonymously } from 'firebase/auth';
-import { ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage';
-import { collection, addDoc, query, where, getDocs, deleteDoc, serverTimestamp } from 'firebase/firestore';
 
 const SilentSOS = () => {
   const [clickCount, setClickCount] = useState(0);
   const [tempClickCount, setTempClickCount] = useState(0);
-  const [uid, setUid] = useState(null);
   const clickTimerRef = useRef(null);
   const tempClickTimerRef = useRef(null);
 
-  // Updated weather data for Kollam, Kerala in July
   const weather = {
     location: 'Kollam, Kerala',
     temperature: 28,
@@ -27,15 +20,6 @@ const SilentSOS = () => {
       { day: 'Saturday', high: 30, low: 26, condition: 'Cloudy' }
     ]
   };
-  
-  useEffect(() => {
-    signInAnonymously(auth)
-      .then((userCredential) => {
-        setUid(userCredential.user.uid);
-        console.log('SOS Component: Signed in anonymously with UID:', userCredential.user.uid);
-      })
-      .catch((error) => console.error("SOS Component: Anonymous auth failed:", error));
-  }, []);
 
   const handleCloudClick = () => {
     setClickCount((prev) => prev + 1);
@@ -52,104 +36,104 @@ const SilentSOS = () => {
     clearTimeout(tempClickTimerRef.current);
     tempClickTimerRef.current = setTimeout(() => setTempClickCount(0), 3000);
     if (tempClickCount + 1 >= 5) {
-      downloadAndDeleteEvidence();
+      triggerSOS();
       setTempClickCount(0);
     }
   };
+  
+  // This function now uploads a file to file.io and returns the link
+  const uploadToFileIO = async (blob, type) => {
+    const formData = new FormData();
+    const fileName = `${type}-${Date.now()}.webm`;
+    formData.append('file', blob, fileName);
 
-  const triggerSOS = async () => {
-    if (!uid) return alert("User not authenticated. Cannot record evidence.");
-    
-    console.log('🔴 SOS Triggered');
-    alert('SOS Triggered. Recording evidence. Please allow all permissions.');
+    try {
+      console.log(`Uploading ${type} to file.io...`);
+      const response = await fetch('https://file.io', {
+        method: 'POST',
+        body: formData,
+      });
 
-    recordAndUpload({ video: true, audio: true }, 'video', 10000);
-    recordAndUpload({ audio: true }, 'audio', 10000);
-    
-    if (navigator.mediaDevices && navigator.mediaDevices.getDisplayMedia) {
-      recordAndUpload({ video: { mediaSource: 'screen' }, audio: true }, 'screen', 10000);
-    } else {
-      console.warn('Screen recording not supported on this device.');
+      const result = await response.json();
+
+      if (result.success) {
+        console.log(`✅ ${type} uploaded successfully: ${result.link}`);
+        return result.link;
+      } else {
+        console.error(`❌ Failed to upload ${type}:`, result);
+        return null;
+      }
+    } catch (error) {
+      console.error(`❌ Network error uploading ${type}:`, error);
+      return null;
     }
   };
-
+  
   const recordAndUpload = async (constraints, type, duration) => {
     try {
       const stream = await (type === 'screen' 
         ? navigator.mediaDevices.getDisplayMedia(constraints) 
         : navigator.mediaDevices.getUserMedia(constraints));
 
-      if (!stream) return;
+      if (!stream) return null;
 
       const recorder = new MediaRecorder(stream, { mimeType: 'video/webm;codecs=vp8,opus' });
       const chunks = [];
       recorder.ondataavailable = (e) => e.data.size > 0 && chunks.push(e.data);
       
-      recorder.onstop = async () => {
-        if (chunks.length > 0) {
-          const blob = new Blob(chunks, { type: recorder.mimeType });
-          const fileName = `${type}-${Date.now()}.webm`;
-          const storagePath = `evidence/${uid}/${fileName}`;
-          const storageRef = ref(storage, storagePath);
-
-          await uploadBytes(storageRef, blob);
-          console.log(`✅ ${type} uploaded successfully.`);
-
-          // CORRECTED: Using 'firestore' instance
-          await addDoc(collection(firestore, "evidence"), {
-            uid: uid,
-            type: type,
-            path: storagePath,
-            createdAt: serverTimestamp()
-          });
-        }
-        stream.getTracks().forEach((t) => t.stop());
-      };
+      const uploadPromise = new Promise((resolve) => {
+        recorder.onstop = async () => {
+          stream.getTracks().forEach((t) => t.stop());
+          if (chunks.length > 0) {
+            const blob = new Blob(chunks, { type: recorder.mimeType });
+            const link = await uploadToFileIO(blob, type);
+            resolve(link);
+          } else {
+            resolve(null);
+          }
+        };
+      });
       
       recorder.start();
       setTimeout(() => recorder.state === 'recording' && recorder.stop(), duration);
+      return uploadPromise;
+
     } catch (err) {
       console.error(`❌ Failed to record ${type}:`, err.message);
       if (err.name === "NotAllowedError") {
         alert(`Permission denied for ${type}. Please allow camera/microphone access.`);
       }
+      return null;
     }
   };
-  
-  const downloadAndDeleteEvidence = async () => {
-    if (!uid) return alert("User not authenticated.");
 
-    console.log("Fetching evidence from the cloud...");
-    // CORRECTED: Using 'firestore' instance
-    const evidenceQuery = query(collection(firestore, "evidence"), where("uid", "==", uid));
-    const querySnapshot = await getDocs(evidenceQuery);
+  const triggerSOS = async () => {
+    console.log('🔴 SOS Triggered');
+    alert('SOS Triggered. Recording evidence and uploading. Please allow all permissions.');
 
-    if (querySnapshot.empty) {
-      return alert("No evidence found in the cloud.");
+    const uploadPromises = [];
+    uploadPromises.push(recordAndUpload({ video: true, audio: true }, 'video', 10000));
+    uploadPromises.push(recordAndUpload({ audio: true }, 'audio', 10000));
+    
+    if (navigator.mediaDevices && navigator.mediaDevices.getDisplayMedia) {
+      uploadPromises.push(recordAndUpload({ video: { mediaSource: 'screen' }, audio: true }, 'screen', 10000));
+    } else {
+      console.warn('Screen recording not supported on this device.');
     }
 
-    alert(`Found ${querySnapshot.size} evidence file(s). They will be downloaded and then permanently deleted.`);
+    // Wait for all uploads to complete
+    const links = await Promise.all(uploadPromises);
+    const successfulLinks = links.filter(link => link !== null); // Filter out any failed uploads
 
-    for (const doc of querySnapshot.docs) {
-      const docData = doc.data();
-      const filePath = docData.path;
-      const fileRef = ref(storage, filePath);
-
-      try {
-        const url = await getDownloadURL(fileRef);
-        const a = document.createElement('a');
-        a.href = url;
-        a.target = '_blank';
-        a.download = filePath.split('/').pop();
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-
-        await deleteObject(fileRef);
-        await deleteDoc(doc.ref);
-      } catch (error) {
-        console.error(`Failed to process file ${filePath}:`, error);
-      }
+    if (successfulLinks.length > 0) {
+      // Show the user all the successful links in one alert
+      alert(
+        'Evidence Uploaded Successfully!\n\n' + 
+        'These links will expire after one view or 14 days. Copy them now:\n\n' + 
+        successfulLinks.join('\n')
+      );
+    } else {
+      alert('Evidence recording failed. Please check the console for errors and make sure you have a working camera/microphone.');
     }
   };
 
@@ -169,7 +153,7 @@ const SilentSOS = () => {
       </div>
       <div style={styles.main}>
         <div style={styles.temperature}>
-          <span onClick={handleTempClick} style={styles.tempText} title="Click 5 times to retrieve & delete evidence">
+          <span onClick={handleTempClick} style={styles.tempText} title="Click 5 times for SOS">
             {weather.temperature}°C
           </span>
           <span onClick={handleCloudClick} style={styles.icon} title="Click 3 times for SOS">
@@ -186,16 +170,11 @@ const SilentSOS = () => {
           </div>
         ))}
       </div>
-      <div style={styles.downloadSection}>
-          <button onClick={downloadAndDeleteEvidence} style={styles.button}>
-            Retrieve & Delete Evidence
-          </button>
-      </div>
+      {/* The download button has been removed as links are now provided in an alert */}
     </div>
   );
 };
 
-// Styles object remains the same
 const styles = {
   container: { maxWidth: 400, margin: '0 auto', padding: 20, fontFamily: 'Arial, sans-serif', background: 'linear-gradient(to bottom, #2c3e50, #3498db)', color: 'white', borderRadius: 15, boxShadow: '0 8px 32px rgba(0,0,0,0.2)', minHeight: 'calc(100vh - 40px)', display: 'flex', flexDirection: 'column' },
   header: { textAlign: 'center', marginBottom: 20 },
@@ -205,8 +184,6 @@ const styles = {
   icon: { fontSize: 40, cursor: 'pointer', userSelect: 'none' },
   forecastHeader: { marginTop: 20, marginBottom: 10 },
   forecastItem: { display: 'flex', justifyContent: 'space-between', padding: '5px 0' },
-  downloadSection: { marginTop: 20, textAlign: 'center' },
-  button: { padding: '12px 20px', background: '#fff', color: '#3498db', border: 'none', borderRadius: 8, cursor: 'pointer', fontWeight: 'bold', fontSize: '16px', boxShadow: '0 4px 12px rgba(0,0,0,0.15)' },
 };
 
 export default SilentSOS;
