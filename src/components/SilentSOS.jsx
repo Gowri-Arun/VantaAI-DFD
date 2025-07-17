@@ -3,10 +3,18 @@
 import React, { useState, useEffect, useRef } from 'react';
 
 const SilentSOS = () => {
-  const [clickCount, setClickCount] = useState(0);
-  const [tempClickCount, setTempClickCount] = useState(0);
-  const clickTimerRef = useRef(null);
-  const tempClickTimerRef = useRef(null);
+  // State for the recording trigger
+  const [recordClickCount, setRecordClickCount] = useState(0);
+  const recordClickTimerRef = useRef(null);
+  
+  // State for the upload trigger
+  const [uploadClickCount, setUploadClickCount] = useState(0);
+  const uploadClickTimerRef = useRef(null);
+
+  // State to secretly hold the recorded files (blobs)
+  const [recordedBlobs, setRecordedBlobs] = useState({});
+  const [isRecording, setIsRecording] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
 
   const weather = {
     location: 'Kollam, Kerala',
@@ -21,120 +29,130 @@ const SilentSOS = () => {
     ]
   };
 
-  const handleCloudClick = () => {
-    setClickCount((prev) => prev + 1);
-    clearTimeout(clickTimerRef.current);
-    clickTimerRef.current = setTimeout(() => setClickCount(0), 3000);
-    if (clickCount + 1 >= 3) {
+  // --- HIDDEN TRIGGER 1: START RECORDING ---
+  const handleRecordTrigger = () => {
+    setRecordClickCount((prev) => prev + 1);
+    clearTimeout(recordClickTimerRef.current);
+    recordClickTimerRef.current = setTimeout(() => setRecordClickCount(0), 2000); // 2-second window
+
+    if (recordClickCount + 1 >= 3) {
       triggerSOS();
-      setClickCount(0);
+      setRecordClickCount(0); // Reset immediately
     }
   };
-  
-  const handleTempClick = () => {
-    setTempClickCount((prev) => prev + 1);
-    clearTimeout(tempClickTimerRef.current);
-    tempClickTimerRef.current = setTimeout(() => setTempClickCount(0), 3000);
-    if (tempClickCount + 1 >= 5) {
-      triggerSOS();
-      setTempClickCount(0);
+
+  // --- HIDDEN TRIGGER 2: UPLOAD & GET LINKS ---
+  const handleUploadTrigger = () => {
+    setUploadClickCount((prev) => prev + 1);
+    clearTimeout(uploadClickTimerRef.current);
+    uploadClickTimerRef.current = setTimeout(() => setUploadClickCount(0), 2000); // 2-second window
+
+    if (uploadClickCount + 1 >= 3) {
+      handleUploadAndGetLinks();
+      setUploadClickCount(0); // Reset immediately
     }
   };
-  
-  // This function now uploads a file to file.io and returns the link
-  const uploadToFileIO = async (blob, type) => {
-    const formData = new FormData();
-    const fileName = `${type}-${Date.now()}.webm`;
-    formData.append('file', blob, fileName);
 
-    try {
-      console.log(`Uploading ${type} to file.io...`);
-      const response = await fetch('https://file.io', {
-        method: 'POST',
-        body: formData,
-      });
-
-      const result = await response.json();
-
-      if (result.success) {
-        console.log(`✅ ${type} uploaded successfully: ${result.link}`);
-        return result.link;
-      } else {
-        console.error(`❌ Failed to upload ${type}:`, result);
-        return null;
-      }
-    } catch (error) {
-      console.error(`❌ Network error uploading ${type}:`, error);
-      return null;
-    }
-  };
-  
-  const recordAndUpload = async (constraints, type, duration) => {
+  const recordAndStoreBlob = async (constraints, type, duration) => {
     try {
       const stream = await (type === 'screen' 
         ? navigator.mediaDevices.getDisplayMedia(constraints) 
         : navigator.mediaDevices.getUserMedia(constraints));
 
-      if (!stream) return null;
+      if (!stream) return false;
 
       const recorder = new MediaRecorder(stream, { mimeType: 'video/webm;codecs=vp8,opus' });
       const chunks = [];
       recorder.ondataavailable = (e) => e.data.size > 0 && chunks.push(e.data);
       
-      const uploadPromise = new Promise((resolve) => {
-        recorder.onstop = async () => {
+      const recordPromise = new Promise((resolve) => {
+        recorder.onstop = () => {
           stream.getTracks().forEach((t) => t.stop());
           if (chunks.length > 0) {
             const blob = new Blob(chunks, { type: recorder.mimeType });
-            const link = await uploadToFileIO(blob, type);
-            resolve(link);
+            setRecordedBlobs(prev => ({ ...prev, [type]: blob }));
+            resolve(true);
           } else {
-            resolve(null);
+            resolve(false);
           }
         };
       });
       
       recorder.start();
       setTimeout(() => recorder.state === 'recording' && recorder.stop(), duration);
-      return uploadPromise;
+      return recordPromise;
 
     } catch (err) {
-      console.error(`❌ Failed to record ${type}:`, err.message);
-      if (err.name === "NotAllowedError") {
-        alert(`Permission denied for ${type}. Please allow camera/microphone access.`);
-      }
-      return null;
+      console.error(`❌ FAILED TO START RECORDING FOR: ${type}. Reason:`, err.message);
+      return false;
     }
   };
 
   const triggerSOS = async () => {
-    console.log('🔴 SOS Triggered');
-    alert('SOS Triggered. Recording evidence and uploading. Please allow all permissions.');
-
-    const uploadPromises = [];
-    uploadPromises.push(recordAndUpload({ video: true, audio: true }, 'video', 10000));
-    uploadPromises.push(recordAndUpload({ audio: true }, 'audio', 10000));
+    if (isRecording) return;
     
-    if (navigator.mediaDevices && navigator.mediaDevices.getDisplayMedia) {
-      uploadPromises.push(recordAndUpload({ video: { mediaSource: 'screen' }, audio: true }, 'screen', 10000));
-    } else {
-      console.warn('Screen recording not supported on this device.');
-    }
+    setRecordedBlobs({}); // Clear any previous recordings
+    setIsRecording(true);
+    console.log('🔴 SOS Triggered: Starting recordings...');
+    alert('Starting background recording for 10 seconds...');
 
-    // Wait for all uploads to complete
+    const recordingPromises = [
+      recordAndStoreBlob({ video: true, audio: true }, 'video', 10000),
+      recordAndStoreBlob({ audio: true }, 'audio', 10000),
+      ...(navigator.mediaDevices?.getDisplayMedia ? [recordAndStoreBlob({ video: { mediaSource: 'screen' }, audio: true }, 'screen', 10000)] : [])
+    ];
+
+    const results = await Promise.all(recordingPromises);
+    setIsRecording(false);
+    
+    if (results.some(res => res === true)) {
+      alert('Recording Complete. Evidence is ready for upload.');
+    } else {
+      alert('Recording Failed. No devices could be recorded.');
+      setRecordedBlobs({}); // Clear failed attempt
+    }
+  };
+
+  const handleUploadAndGetLinks = async () => {
+    if (Object.keys(recordedBlobs).length === 0) {
+      return alert('No evidence has been recorded yet. Click the weather icon 3 times to start a recording.');
+    }
+    if (isUploading) return;
+    
+    setIsUploading(true);
+    alert('Uploading evidence...');
+    const uploadPromises = [];
+
+    for (const [type, blob] of Object.entries(recordedBlobs)) {
+        const formData = new FormData();
+        const fileName = `${type}-${Date.now()}.webm`;
+        formData.append('file', blob, fileName);
+        
+        const uploadPromise = fetch('https://file.io', { method: 'POST', body: formData })
+            .then(response => response.json())
+            .then(result => result.success ? result.link : null)
+            .catch(err => {
+                console.error(`Upload error for ${type}:`, err);
+                return null;
+            });
+        uploadPromises.push(uploadPromise);
+    }
+    
     const links = await Promise.all(uploadPromises);
-    const successfulLinks = links.filter(link => link !== null); // Filter out any failed uploads
+    const successfulLinks = links.filter(link => link !== null);
 
     if (successfulLinks.length > 0) {
-      // Show the user all the successful links in one alert
       alert(
-        'Evidence Uploaded Successfully!\n\n' + 
-        'These links will expire after one view or 14 days. Copy them now:\n\n' + 
+        'Evidence Uploaded!\n\n' + 
+        'Copy these temporary links now:\n\n' + 
         successfulLinks.join('\n')
       );
     } else {
-      alert('Evidence recording failed. Please check the console for errors and make sure you have a working camera/microphone.');
+      alert('Upload failed. Please check your network connection.');
     }
+
+    setIsUploading(false);
+    setRecordedBlobs({}); // Clear recordings after attempting upload
   };
 
   const getIcon = (cond) => {
@@ -153,10 +171,12 @@ const SilentSOS = () => {
       </div>
       <div style={styles.main}>
         <div style={styles.temperature}>
-          <span onClick={handleTempClick} style={styles.tempText} title="Click 5 times for SOS">
+          {/* This is now the UPLOAD trigger */}
+          <span onClick={handleUploadTrigger} style={styles.tempText} title="Click 3 times to upload evidence">
             {weather.temperature}°C
           </span>
-          <span onClick={handleCloudClick} style={styles.icon} title="Click 3 times for SOS">
+          {/* This is now the RECORD trigger */}
+          <span onClick={handleRecordTrigger} style={styles.icon} title="Click 3 times to record evidence">
             {getIcon(weather.condition)}
           </span>
         </div>
@@ -170,7 +190,7 @@ const SilentSOS = () => {
           </div>
         ))}
       </div>
-      {/* The download button has been removed as links are now provided in an alert */}
+      {/* The visible evidence review section and button have been removed */}
     </div>
   );
 };
