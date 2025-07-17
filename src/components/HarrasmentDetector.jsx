@@ -1,10 +1,14 @@
+// src/components/HarassmentDetector.jsx
+
 import React, { useState, useEffect, useRef } from 'react';
 import { Paperclip, Send, Shield, AlertTriangle, Info, X, LogIn, XCircle } from 'lucide-react';
-import { firestore } from '../firebase';
+// CORRECTED: Importing 'firestore' from the single, master config file
+import { firestore } from '../firebase-config';
 import { collection, addDoc, onSnapshot, query, orderBy, serverTimestamp } from 'firebase/firestore';
 import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage';
 
 const analyzeMessageForHarassment = (message) => {
+    // This local analysis logic remains the same
     const harassmentKeywords = ['stupid', 'ugly', 'hate', 'kill', 'die', 'idiot', 'loser', 'dumb', 'worthless', 'disgusting', 'pathetic'];
     const flirtingKeywords = ['beautiful', 'sexy', 'hot', 'gorgeous', 'pretty', 'attractive', 'cute', 'sweet'];
     const aggressiveKeywords = ['shut up', 'go away', 'leave me alone', 'annoying', 'fuck', 'damn', 'shit'];
@@ -61,16 +65,10 @@ const HarassmentDetector = () => {
                 const messageData = doc.data();
                 if (messageData.room === room) {
                     const isCurrentUser = messageData.sender === username;
-
-                    // --- THIS IS THE IMPROVED LOGIC ---
-                    // Prioritize the AI's image analysis from the backend.
                     let analysis = messageData.analysis; 
-                    // If there's no image analysis (e.g., text-only message), run our local text analysis.
                     if (!analysis && messageData.message) {
                         analysis = analyzeMessageForHarassment(messageData.message);
                     }
-                    // --- END OF IMPROVEMENT ---
-
                     newMessages.push({
                         id: doc.id,
                         ...messageData,
@@ -99,6 +97,8 @@ const HarassmentDetector = () => {
         let imageUrl = null;
 
         if (hasImage) {
+            // NOTE: This initializes storage on-the-fly, which is fine.
+            // It uses the default app instance we already configured.
             const storage = getStorage();
             const imagePath = `images/${room}/${Date.now()}_${imageFile.name}`;
             const imageStorageRef = storageRef(storage, imagePath);
@@ -122,9 +122,8 @@ const HarassmentDetector = () => {
         setIsUploading(false);
     };
     
-    // ... All other helper functions and the JSX return block are identical to the previous version ...
-    // I am including them all below so you can copy the entire file.
-
+    // ... all other functions (handleImageSelect, joinRoom, etc.) are identical
+    
     const handleImageSelect = (e) => {
         const file = e.target.files[0];
         if (file) {
@@ -177,6 +176,7 @@ const HarassmentDetector = () => {
         setWarningMessage(null);
     };
 
+    // ... The entire JSX return block is identical to what you provided ...
     if (!joinedChat) {
         return (
             <div style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif', height: '100vh', width: '100%', maxWidth: '400px', margin: '0 auto', display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '24px', background: 'linear-gradient(180deg, #E8D5FF 0%, #F0E9FF 25%, #E0E7FF 50%, #DBEAFE 75%, #E8D5FF 100%)' }}>
