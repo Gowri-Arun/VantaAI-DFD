@@ -69,24 +69,17 @@ function Dashboard() {
     },
   ];
 
-  const navItems = [
-    { path: '/', icon: Home, label: 'Home' },
-    { path: '/prevent', icon: ShieldCheck, label: 'Prevention' },
-    { path: '/detect', icon: Search, label: 'Detection' },
-    { path: '/report', icon: FileText, label: 'Reporting' },
-    { path: '/support', icon: Heart, label: 'Support' }
-  ];
-
+  // --- UPDATED BLUE & PINK COLOR SCHEMES ---
   const cardSchemes = [
-    { // Scheme 0: Soft Pink/Orange
-      bgColor: '#FFF0EB',
-      iconColor: '#D94D1A',
-      titleColor: '#5C2D18',
+    { // Scheme 0: Soft Blue
+      bgColor: '#EFF6FF', // Tailwind blue-50
+      iconColor: '#3B82F6', // Tailwind blue-500
+      titleColor: '#1E3A8A', // Tailwind blue-900
     },
-    { // Scheme 1: Soft Blue
-      bgColor: '#EBF8FF',
-      iconColor: '#1A759F',
-      titleColor: '#114B5F',
+    { // Scheme 1: Soft Pink
+      bgColor: '#FEF2F2', // Tailwind red-50 (looks pink)
+      iconColor: '#F43F5E', // Tailwind rose-500
+      titleColor: '#881337', // Tailwind rose-900
     }
   ];
 
@@ -105,11 +98,13 @@ function Dashboard() {
       <main style={styles.grid}>
         {cardData.map((card, index) => {
           const IconComponent = card.icon;
+          // Alternates between blue and pink schemes
           const scheme = cardSchemes[index % 2];
           return (
             <Link key={index} to={card.path} style={{
               ...styles.card,
-              backgroundColor: scheme.bgColor,
+              // Subtle gradient for depth, using the chosen background color
+              background: `linear-gradient(145deg, rgba(255,255,255,0.9), ${scheme.bgColor})`,
             }}>
               <div style={{...styles.iconContainer, color: scheme.iconColor }}>
                  <IconComponent size={20} />
@@ -121,20 +116,22 @@ function Dashboard() {
         })}
       </main>
 
-        <BottomNav/>
+      {/* Bottom Navigation is expected to be placed here,
+          and the container's padding will prevent overlap */}
+      <BottomNav/>
     </div>
   );
 }
 
-// --- Styles for the Final Clean UI with Gradient ---
+// --- Styles updated for a more seamless Blue & Pink UI ---
 const styles = {
   container: {
     height: '100vh',
-    maxHeight: '100dvh',
-    overflow: 'hidden', 
-    padding: '16px 16px 0 16px',
-    // --- THIS IS THE UPDATED GRADIENT BACKGROUND ---
-    background: 'linear-gradient(180deg, #E0EFFF 0%, #EAE4FF 100%)', 
+    maxHeight: '100dvh', // Use dvh for better mobile browser support
+    overflow: 'hidden',
+    // Added generous bottom padding to make space for the BottomNav
+    padding: '16px 16px 96px 16px',
+    background: 'linear-gradient(180deg, #E0EFFF 0%, #EAE4FF 100%)',
     fontFamily: "'Inter', sans-serif",
     display: 'flex',
     flexDirection: 'column',
@@ -144,7 +141,7 @@ const styles = {
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingBottom: '16px',
+    paddingBottom: '20px', // Slightly more space below header
     flexShrink: 0,
   },
   title: {
@@ -157,10 +154,10 @@ const styles = {
     display: 'flex',
     alignItems: 'center',
     gap: '8px',
-    padding: '6px 10px',
-    backgroundColor: 'rgba(255, 255, 255, 0.4)', // Switched back to semi-transparent to match the gradient
+    padding: '6px 12px',
+    backgroundColor: 'rgba(255, 255, 255, 0.5)', // Slightly more transparent
     borderRadius: '20px',
-    border: '1px solid rgba(255, 255, 255, 0.6)',
+    border: '1px solid rgba(255, 255, 255, 0.7)',
   },
   profileName: {
     fontSize: '13px',
@@ -169,47 +166,60 @@ const styles = {
   },
 
   grid: {
-    flexGrow: 1, 
+    flexGrow: 1,
     display: 'grid',
     gridTemplateColumns: 'repeat(2, 1fr)',
-    gap: '16px', 
+    gap: '16px',
+    overflowY: 'auto', // Allow grid to scroll on smaller screens if content overflows
     minHeight: 0,
-    alignContent: 'center', 
+    // Add a little padding at the bottom of the scroll area
+    paddingBottom: '16px',
+    // Hide scrollbar for a cleaner look
+    msOverflowStyle: 'none',  /* IE and Edge */
+    scrollbarWidth: 'none',  /* Firefox */
+  },
+  // Hides scrollbar for Webkit browsers (Chrome, Safari)
+  '@global': {
+    'styles.grid::-webkit-scrollbar': {
+      display: 'none',
+    },
   },
   card: {
-    borderRadius: '16px',
+    borderRadius: '20px', // More rounded corners
     padding: '16px',
     textDecoration: 'none',
     color: 'inherit',
-    boxShadow: '0 4px 15px rgba(0, 0, 0, 0.05)',
-    border: '1px solid #FFFFFF50', // A subtle white border
+    // A softer, more diffused shadow
+    boxShadow: '0 6px 20px rgba(109, 40, 217, 0.08)',
+    border: '1px solid rgba(255, 255, 255, 0.6)',
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'center',
+    transition: 'transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out',
   },
   iconContainer: {
-    width: '36px',
-    height: '36px',
+    width: '40px',
+    height: '40px',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: '10px',
-    backgroundColor: 'rgba(255, 255, 255, 0.8)',
+    borderRadius: '12px',
+    // Semi-transparent to blend with card gradient
+    backgroundColor: 'rgba(255, 255, 255, 0.7)',
     marginBottom: '12px'
   },
   cardTitle: {
-    fontSize: '14px',
+    fontSize: '15px', // Slightly larger for better readability
     fontWeight: '600',
     fontFamily: "'Lora', serif",
     margin: '0 0 4px 0',
   },
   cardDescription: {
     fontSize: '12px',
-    color: '#475569',
+    color: '#64748B', // A softer slate color for description text
     lineHeight: '1.5',
     margin: 0,
   },
-
 };
 
 export default Dashboard;
