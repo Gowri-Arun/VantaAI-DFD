@@ -1,36 +1,36 @@
-// src/components/SupportScreen.js
+// src/components/LegalSupportScreen.js
 
 import React from 'react';
 import { Link } from 'react-router-dom';
-import BottomNav from './BottomNav'; 
-import { Heart, MessageSquare } from 'lucide-react';
+import { Scale, Bot } from 'lucide-react';
+import BottomNav from './Tabs/BottomNav';
 
-function SupportScreen() {
+function LegalSupportScreen() {
   return (
     <>
       <div style={styles.container}>
-        <h2 style={styles.heading}>💖 Emotional Support</h2>
-        <p style={styles.subtext}>Your well-being matters. Help is always available.</p>
+        <h2 style={styles.heading}>⚖️ Legal Support</h2>
+        <p style={styles.subtext}>Access legal resources and expert guidance.</p>
 
         <div style={styles.grid}>
-          <Link to="/counseling-connect" style={{ ...styles.card, backgroundColor: '#fff3e0' }}>
+          <Link to="/LegalChatbot" style={{ ...styles.card, backgroundColor: '#eef2f9' }}>
             <div style={styles.cardIcon}>
-              <MessageSquare size={24} color="#ef6c00" />
+              <Bot size={24} color="#303f9f" />
             </div>
-            <h3 style={styles.cardTitle}>Connect with a Counselor</h3>
-            <p style={styles.cardText}>Chat confidentially with a certified mental health professional.</p>
+            <h3 style={styles.cardTitle}>Legal Chatbot</h3>
+            <p style={styles.cardText}>Ask legal questions in a safe, anonymous chat.</p>
           </Link>
 
-          <Link to="/mental-wellness-hub" style={{ ...styles.card, backgroundColor: '#fce4ec' }}>
+          <Link to="/KnowYourRightsHub" style={{ ...styles.card, backgroundColor: '#f3e5f5' }}>
             <div style={styles.cardIcon}>
-              <Heart size={24} color="#d81b60" />
+              <Scale size={24} color="#6a1b9a" />
             </div>
-            <h3 style={styles.cardTitle}>Mental Wellness Hub</h3>
-            <p style={styles.cardText}>Explore articles and tools to support your mental health.</p>
+            <h3 style={styles.cardTitle}>Know Your Rights Hub</h3>
+            <p style={styles.cardText}>Browse your legal protections in simple language.</p>
           </Link>
         </div>
       </div>
-      <BottomNav />
+      <BottomNav/>
     </>
   );
 }
@@ -40,13 +40,13 @@ const styles = {
     minHeight: '100vh',
     padding: '20px',
     paddingBottom: '80px',
-    background: 'linear-gradient(to bottom, #fce8ff, #e0f7fa)',
+    background: 'linear-gradient(to bottom, #e3f2fd, #f1f8e9)',
     fontFamily: 'Segoe UI, sans-serif',
   },
   heading: {
     fontSize: '24px',
     fontWeight: 'bold',
-    color: '#d81b60',
+    color: '#3949ab',
     marginBottom: '6px'
   },
   subtext: {
@@ -75,15 +75,13 @@ const styles = {
   cardTitle: {
     fontSize: '18px',
     fontWeight: '600',
-    color: '#880e4f',
     margin: 0,
   },
   cardText: {
     fontSize: '14px',
-    color: '#4e342e',
     lineHeight: 1.4,
     margin: 0,
   }
 };
 
-export default SupportScreen;
+export default LegalSupportScreen;

@@ -17,6 +17,8 @@ import LegalComplaints from './components/LegalComplaints';
 import TakeDownRequests from './components/TakeDownRequests';
 import HarassmentDetector from './components/HarrasmentDetector';
 import SilentSOS from './components/SilentSOS';
+import LegalSupportScreen from './components/LegalSupportScreen'; 
+
 
 function App() {
   return (
@@ -39,9 +41,11 @@ function App() {
         <Route path="/TakeDownRequests" element={<TakeDownRequests />} />
         <Route path="/harassment" element={<HarassmentDetector/>}/>
         <Route path="/sos" element={<SilentSOS/>}/>
+        <Route path="/legal" element={<LegalSupportScreen />} />
       </Routes>
     </Router>
   );
 }
 
 export default App;
+
