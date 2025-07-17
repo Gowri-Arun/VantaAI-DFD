@@ -1,44 +1,60 @@
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Home, Shield, Search, FileText, Heart } from 'lucide-react';
+import { Home, ShieldCheck, Search, FileText, Heart } from 'lucide-react';
 
 function BottomNav() {
   const { pathname } = useLocation();
+  const navRef = useRef(null);
+  const [indicatorStyle, setIndicatorStyle] = useState({});
 
-  // Updated navItems with Lucide icons and labels
   const navItems = [
-    { path: '/', icon: Home, label: 'Home' },
-    { path: '/prevent', icon: Shield, label: 'Prevention' },
-    { path: '/detect', icon: Search, label: 'Detection' },
-    { path: '/report', icon: FileText, label: 'Reporting' },
-    { path: '/support', icon: Heart, label: 'Support' }
+    { id: 'home', path: '/', icon: Home, label: 'Home' },
+    { id: 'prevent', path: '/prevent', icon: ShieldCheck, label: 'Prevention' },
+    { id: 'detect', path: '/detect', icon: Search, label: 'Detection' },
+    { id: 'report', path: '/report', icon: FileText, label: 'Reporting' },
+    { id: 'support', path: '/support', icon: Heart, label: 'Support' }
   ];
 
+  // This effect calculates the position for the sliding indicator dot
+  useEffect(() => {
+    const activeItem = document.getElementById(`nav-item-${pathname}`);
+    if (activeItem && navRef.current) {
+      const navRect = navRef.current.getBoundingClientRect();
+      const itemRect = activeItem.getBoundingClientRect();
+      
+      setIndicatorStyle({
+        width: '6px',
+        height: '6px',
+        transform: `translateX(${itemRect.left - navRect.left + itemRect.width / 2 - 3}px)`,
+        opacity: 1,
+      });
+    }
+  }, [pathname]);
+
   return (
-    <nav style={styles.navbar}>
+    <nav ref={navRef} style={styles.navContainer}>
+      {/* The animated indicator dot */}
+      <div style={{ ...styles.indicator, ...indicatorStyle }} />
+
       {navItems.map((item) => {
-        const isActive = pathname === item.path;
         const IconComponent = item.icon;
-        
+        const isActive = pathname === item.path;
+
         return (
-          <Link key={item.path} to={item.path} style={styles.navLink}>
-            <div style={{
-                ...styles.navItemContainer,
-                // Add a pill background for the active item
-                backgroundColor: isActive ? 'rgba(233, 213, 255, 0.7)' : 'transparent',
-              }}>
-              <IconComponent 
-                size={22} 
-                strokeWidth={isActive ? 2.5 : 2}
-                color={isActive ? styles.activeColor.color : styles.inactiveColor.color}
-              />
-              <span style={{
-                  ...styles.navLabel,
-                  color: isActive ? styles.activeColor.color : styles.inactiveColor.color,
-                }}>
-                {item.label}
-              </span>
-            </div>
+          <Link
+            key={item.path}
+            id={`nav-item-${item.path}`} // ID for measuring position
+            to={item.path}
+            style={styles.navItemLink}
+          >
+            <IconComponent
+              size={24}
+              color={isActive ? styles.active.color : styles.inactive.color}
+              strokeWidth={isActive ? 2.5 : 2}
+            />
+            <span style={isActive ? styles.activeLabel : styles.inactiveLabel}>
+              {item.label}
+            </span>
           </Link>
         );
       })}
@@ -46,52 +62,74 @@ function BottomNav() {
   );
 }
 
-// Enhanced and modern styles
+// --- Styles for a Modern, Sleek, and Lovely Aesthetic ---
 const styles = {
-  // Main navbar with "frosted glass" effect
-  navbar: {
+  navContainer: {
     position: 'fixed',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    backgroundColor: 'rgba(255, 255, 255, 0.75)', // Semi-transparent white
-    backdropFilter: 'blur(16px)', // The blur effect
-    borderTop: '1px solid #E5E7EB', // Lighter border
-    padding: '8px 0 16px 0', // Padding for content and iPhone safe area
+    // --- Floating Effect ---
+    bottom: '24px',
+    left: '50%',
+    transform: 'translateX(-50%)',
+    width: 'calc(100% - 48px)',
+    maxWidth: '400px', // Max width for larger screens
+    // ---
+    height: '68px',
     display: 'flex',
     justifyContent: 'space-around',
     alignItems: 'center',
-    zIndex: 1000,
+    // --- Refined Glassmorphism ---
+    backgroundColor: 'rgba(252, 252, 255, 0.7)',
+    backdropFilter: 'blur(16px)',
+    WebkitBackdropFilter: 'blur(16px)',
+    // ---
+    borderRadius: '34px', // Fully rounded corners
+    border: '1px solid rgba(255, 255, 255, 0.5)',
+    boxShadow: '0 8px 32px rgba(109, 40, 217, 0.15)',
   },
-  // Style for the link element
-  navLink: {
-    textDecoration: 'none',
-    flex: 1, // Ensure items take up equal space
-    display: 'flex',
-    justifyContent: 'center',
-  },
-  // Container for icon and label
-  navItemContainer: {
+  navItemLink: {
+    flex: 1,
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
+    justifyContent: 'center',
     gap: '4px',
-    padding: '4px 12px',
-    borderRadius: '16px',
-    transition: 'background-color 0.3s ease',
+    textDecoration: 'none',
+    height: '100%',
+    position: 'relative',
+    color: '#4A5568',
+    transition: 'color 0.3s ease',
   },
-  // Style for the text label
-  navLabel: {
-    fontSize: '10px',
+  inactive: {
+    color: '#5B657E', // Softer, less prominent color
+  },
+  active: {
+    color: '#6D28D9', // Vibrant primary color
+  },
+  inactiveLabel: {
+    fontFamily: "'Inter', sans-serif",
+    fontSize: '11px',
     fontWeight: '500',
-    transition: 'color 0.2s ease',
+    color: '#5B657E',
+    transition: 'all 0.3s ease',
   },
-  // Color definitions
-  activeColor: {
-    color: '#6D28D9', // Rich, vibrant purple
+  activeLabel: {
+    fontFamily: "'Inter', sans-serif",
+    fontSize: '11px',
+    fontWeight: '700', // Bolder for active state
+    color: '#6D28D9',
+    transition: 'all 0.3s ease',
   },
-  inactiveColor: {
-    color: '#6B7280', // Soft gray
+  // --- The Magic Sliding Dot ---
+  indicator: {
+    position: 'absolute',
+    bottom: '8px',
+    height: '6px',
+    width: '6px',
+    backgroundColor: '#6D28D9',
+    borderRadius: '50%',
+    opacity: 0,
+    // The beautiful, fluid transition
+    transition: 'transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1)',
   },
 };
 
