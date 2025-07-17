@@ -1,254 +1,249 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Shield, FileText, Search, Heart, AlertTriangle, Bot, Scale, UserX } from 'lucide-react';
+import {
+  ShieldCheck,
+  Send,
+  Search,
+  Heart,
+  AlertTriangle,
+  Bot,
+  Scale,
+  UserX,
+  Home,
+  User,
+  FileText
+} from 'lucide-react';
 
 function Dashboard() {
   const { pathname } = useLocation();
 
-  const navItems = [
-    { path: '/', icon: '🏠', label: 'Home' },
-    { path: '/prevent', icon: '🛡️', label: 'Prevention' },
-    { path: '/detect', icon: '🔍', label: 'Detection' },
-    { path: '/report', icon: '📤', label: 'Reporting' },
-    { path: '/support', icon: '💖', label: 'Support' }
-  ];
-
   const cardData = [
     {
       title: 'Prevention Tools',
-      description: 'Proactive AI-powered protection to safeguard your digital identity before threats emerge.',
-      icon: Shield,
-      path: '/prevent'
+      description: 'Proactive AI to stop misuse before it starts.',
+      icon: ShieldCheck,
+      path: '/prevent',
     },
     {
       title: 'Report Violations',
-      description: 'Secure, confidential reporting system to address misuse with one-click submission.',
-      icon: FileText,
-      path: '/report'
+      description: 'Secure reporting with one-click submission.',
+      icon: Send,
+      path: '/report',
     },
     {
       title: 'Scan & Detect',
-      description: 'Advanced scanning technology to identify unauthorized use of your images and videos.',
+      description: 'Identify unauthorized use of your images & videos.',
       icon: Search,
-      path: '/detect'
+      path: '/detect',
     },
     {
       title: 'Emotional Support',
-      description: 'Comprehensive mental health resources and professional counseling support services.',
+      description: 'Mental health resources and professional counseling.',
       icon: Heart,
-      path: '/support'
+      path: '/support',
     },
     {
       title: 'Silent SOS',
-      description: 'Discreet emergency alert system for immediate assistance in crisis situations.',
+      description: 'Discreet alerts for immediate assistance in a crisis.',
       icon: AlertTriangle,
-      path: '/sos'
+      path: '/sos',
     },
     {
       title: 'AI Harassment Detector',
-      description: 'Intelligent monitoring system that identifies and flags potential harassment patterns.',
+      description: 'Identifies & flags potential harassment patterns.',
       icon: Bot,
-      path: '/harassment'
+      path: '/harassment',
     },
     {
       title: 'Legal Support',
-      description: 'Expert legal guidance and resources for addressing digital rights violations.',
+      description: 'Expert guidance for digital rights violations.',
       icon: Scale,
-      path: '/legal'
+      path: '/legal',
     },
     {
       title: 'Anonymous Reporting',
-      description: 'Completely anonymous reporting channel to ensure your privacy and safety.',
+      description: 'A private channel to ensure your safety.',
       icon: UserX,
-      path: '/anonymous'
+      path: '/anonymous',
+    },
+  ];
+
+  const navItems = [
+    { path: '/', icon: Home, label: 'Home' },
+    { path: '/prevent', icon: ShieldCheck, label: 'Prevention' },
+    { path: '/detect', icon: Search, label: 'Detection' },
+    { path: '/report', icon: FileText, label: 'Reporting' },
+    { path: '/support', icon: Heart, label: 'Support' }
+  ];
+
+  const cardSchemes = [
+    { // Scheme 0: Soft Pink/Orange
+      bgColor: '#FFF0EB',
+      iconColor: '#D94D1A',
+      titleColor: '#5C2D18',
+    },
+    { // Scheme 1: Soft Blue
+      bgColor: '#EBF8FF',
+      iconColor: '#1A759F',
+      titleColor: '#114B5F',
     }
   ];
 
   return (
-    <>
-      <div style={styles.container}>
-        {/* Header */}
-        <div style={styles.header}>
-          <h1 style={styles.title}>
-            Vanta AI <span role="img" aria-label="butterfly">🦋</span>
-          </h1>
-          <div style={styles.headerIcons}>
-            <div style={styles.profileIcon}>
-              <span style={styles.profileText}>Profile</span>
-            </div>
-          </div>
+    <div style={styles.container}>
+      {/* Header */}
+      <header style={styles.header}>
+        <h1 style={styles.title}>Vanta AI</h1>
+        <div style={styles.profileChip}>
+          <User size={16} style={{ color: '#4A5568' }} />
+          <span style={styles.profileName}>Jaseela</span>
         </div>
+      </header>
 
-        {/* Grid of Cards */}
-        <div style={styles.grid}>
-          {cardData.map((card, index) => {
-            const IconComponent = card.icon;
-            return (
-              <Link key={index} to={card.path} style={styles.card}>
-                <div style={styles.cardContent}>
-                  <div style={styles.cardIcon}>
-                    <IconComponent size={24} color="#4c1d95" />
-                  </div>
-                  <h3 style={styles.cardTitle}>{card.title}</h3>
-                  <p style={styles.cardText}>{card.description}</p>
-                </div>
-              </Link>
-            );
-          })}
-        </div>
-      </div>
+      {/* Grid of Cards */}
+      <main style={styles.grid}>
+        {cardData.map((card, index) => {
+          const IconComponent = card.icon;
+          const scheme = cardSchemes[index % 2];
+          return (
+            <Link key={index} to={card.path} style={{
+              ...styles.card,
+              backgroundColor: scheme.bgColor,
+            }}>
+              <div style={{...styles.iconContainer, color: scheme.iconColor }}>
+                 <IconComponent size={20} />
+              </div>
+              <h3 style={{...styles.cardTitle, color: scheme.titleColor}}>{card.title}</h3>
+              <p style={styles.cardDescription}>{card.description}</p>
+            </Link>
+          );
+        })}
+      </main>
 
-      {/* Bottom Nav */}
-      <div style={styles.bottomNav}>
-        {navItems.map((item) => (
-          <Link
-            key={item.path}
-            to={item.path}
-            style={{
-              ...styles.navLink,
-              color: pathname === item.path ? '#4c1d95' : '#64748b',
-              fontWeight: pathname === item.path ? 'bold' : 'normal',
-            }}
-          >
-            <div style={styles.navItem}>
-              <span style={styles.navIcon}>{item.icon}</span>
-              <span style={styles.navLabel}>{item.label}</span>
-            </div>
-          </Link>
-        ))}
-      </div>
-    </>
+       {/* Bottom Navigation */}
+       <nav style={styles.bottomNav}>
+        {navItems.map((item) => {
+          const NavIcon = item.icon;
+          const isActive = pathname === item.path;
+          return (
+            <Link key={item.path} to={item.path} style={styles.navLink}>
+               <NavIcon size={22} color={isActive ? '#6D28D9' : '#A0AEC0'} strokeWidth={isActive ? 2.5 : 2} />
+               <span style={{...styles.navLabel, color: isActive ? '#6D28D9' : '#A0AEC0' }}>
+                 {item.label}
+               </span>
+            </Link>
+          );
+        })}
+      </nav>
+    </div>
   );
 }
 
+// --- Styles for the Final Clean UI with Gradient ---
 const styles = {
   container: {
     height: '100vh',
-    padding: '16px 12px',
-    paddingBottom: '85px',
-    background: 'linear-gradient(to bottom, #C2E8FF, #E5C8FF)',
-    boxSizing: 'border-box',
-    fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
-    overflow: 'hidden',
+    maxHeight: '100dvh',
+    overflow: 'hidden', 
+    padding: '16px 16px 0 16px',
+    // --- THIS IS THE UPDATED GRADIENT BACKGROUND ---
+    background: 'linear-gradient(180deg, #E0EFFF 0%, #EAE4FF 100%)', 
+    fontFamily: "'Inter', sans-serif",
+    display: 'flex',
+    flexDirection: 'column',
   },
+
   header: {
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: '20px',
+    paddingBottom: '16px',
+    flexShrink: 0,
   },
   title: {
-    fontSize: '26px',
+    fontSize: '24px',
     fontWeight: '700',
-    color: '#5b21b6',
-    margin: 0,
+    fontFamily: "'Lora', serif",
+    color: '#6D28D9',
   },
-  headerIcons: {
+  profileChip: {
     display: 'flex',
     alignItems: 'center',
-  },
-  profileIcon: {
-    display: 'flex',
-    alignItems: 'center',
-    padding: '8px 12px',
-    backgroundColor: 'rgba(255, 255, 255, 0.8)',
+    gap: '8px',
+    padding: '6px 10px',
+    backgroundColor: 'rgba(255, 255, 255, 0.4)', // Switched back to semi-transparent to match the gradient
     borderRadius: '20px',
-    cursor: 'pointer',
-    transition: 'all 0.2s ease',
+    border: '1px solid rgba(255, 255, 255, 0.6)',
   },
-  profileText: {
-    fontSize: '14px',
-    color: '#5b21b6',
+  profileName: {
+    fontSize: '13px',
     fontWeight: '500',
+    color: '#4A5568',
   },
+
   grid: {
+    flexGrow: 1, 
     display: 'grid',
     gridTemplateColumns: 'repeat(2, 1fr)',
-    gridTemplateRows: 'repeat(4, 1fr)',
-    gap: '8px',
-    maxWidth: '600px',
-    margin: '0 auto',
-    height: 'calc(100vh - 140px)',
+    gap: '16px', 
+    minHeight: 0,
+    alignContent: 'center', 
   },
   card: {
-    background: 'linear-gradient(to bottom, #FDD0FA, #EEE5F6)',
-    borderRadius: '14px',
-    padding: '10px',
+    borderRadius: '16px',
+    padding: '16px',
     textDecoration: 'none',
     color: 'inherit',
-    boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)',
-    transition: 'all 0.3s ease',
-    border: '1px solid rgba(244, 114, 182, 0.2)',
-    backdropFilter: 'blur(10px)',
-    cursor: 'pointer',
+    boxShadow: '0 4px 15px rgba(0, 0, 0, 0.05)',
+    border: '1px solid #FFFFFF50', // A subtle white border
     display: 'flex',
     flexDirection: 'column',
-    minHeight: '0',
-    ':hover': {
-      transform: 'translateY(-2px)',
-      boxShadow: '0 8px 30px rgba(0, 0, 0, 0.12)',
-    }
+    justifyContent: 'center',
   },
-  cardContent: {
+  iconContainer: {
+    width: '36px',
+    height: '36px',
     display: 'flex',
-    flexDirection: 'column',
-    height: '100%',
-  },
-  cardIcon: {
-    marginBottom: '6px',
-    padding: '6px',
-    backgroundColor: 'rgba(147, 51, 234, 0.1)',
-    borderRadius: '8px',
-    width: 'fit-content',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: '10px',
+    backgroundColor: 'rgba(255, 255, 255, 0.8)',
+    marginBottom: '12px'
   },
   cardTitle: {
-    fontSize: '13px',
+    fontSize: '14px',
     fontWeight: '600',
-    color: '#4c1d95',
-    marginBottom: '4px',
+    fontFamily: "'Lora', serif",
     margin: '0 0 4px 0',
   },
-  cardText: {
-    fontSize: '10px',
-    color: '#4c1d95',
-    lineHeight: '1.2',
+  cardDescription: {
+    fontSize: '12px',
+    color: '#475569',
+    lineHeight: '1.5',
     margin: 0,
-    flex: 1,
   },
+
   bottomNav: {
-    position: 'fixed',
-    bottom: '0',
-    left: '0',
-    right: '0',
-    backgroundColor: 'rgba(255, 255, 255, 0.95)',
-    backdropFilter: 'blur(20px)',
-    borderTop: '1px solid rgba(226, 232, 240, 0.8)',
-    padding: '12px 0',
+    flexShrink: 0, 
+    backgroundColor: 'rgba(255, 255, 255, 0.7)', // Semi-transparent to show gradient through
+    backdropFilter: 'blur(10px)',
+    borderTop: '1px solid #E5E7EB',
+    padding: '8px 0 16px 0',
     display: 'flex',
     justifyContent: 'space-around',
-    zIndex: 10,
+    alignItems: 'center',
   },
   navLink: {
     textDecoration: 'none',
-    transition: 'color 0.2s ease',
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    minWidth: '60px',
-  },
-  navItem: {
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
     gap: '4px',
   },
-  navIcon: {
-    fontSize: '20px',
-  },
   navLabel: {
-    fontSize: '12px',
-    fontWeight: '500',
-  },
+    fontSize: '10px',
+    fontWeight: '500'
+  }
 };
 
 export default Dashboard;
