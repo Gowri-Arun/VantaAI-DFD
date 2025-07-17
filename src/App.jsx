@@ -20,6 +20,7 @@ import EmotionalSupport from './components/EmotionalSupport';
 import SilentSOS from './components/SilentSOS';
 import LegalSupportScreen from './components/LegalSupportScreen'; 
 import MentalHealth from './components/MentalHealth';
+import AnonymousReporting from './components/AnonymousReporting';
 
 function App() {
   return (
@@ -44,6 +45,7 @@ function App() {
         <Route path="/emotionalsupport" element={<EmotionalSupport/>}/>
         <Route path="/harassment" element={<HarassmentDetector/>}/>
         <Route path="/sos" element={<SilentSOS/>}/>
+        <Route path="/anonymous" element={<AnonymousReporting/>}/>
         <Route path="/legal" element={<LegalSupportScreen />} />
       </Routes>
     </Router>
