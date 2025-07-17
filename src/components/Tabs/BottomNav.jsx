@@ -50,7 +50,7 @@ const styles = {
     height: '80px',
     display: 'flex',
     // --- The Glass Effect ---
-    backgroundColor: 'rgba(242, 240, 255, 0.75)', // Light lavender semi-transparent
+    backgroundColor: '#E0EFFF', // Light lavender semi-transparent
     backdropFilter: 'blur(18px)',
     WebkitBackdropFilter: 'blur(18px)',
     // ---
