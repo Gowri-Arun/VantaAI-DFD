@@ -13,19 +13,19 @@ function SupportScreen() {
         <p style={styles.subtext}>Your well-being matters. Help is always available.</p>
 
         <div style={styles.grid}>
-          <Link to="/counseling-connect" style={{ ...styles.card, backgroundColor: '#fff3e0' }}>
+          <Link to="/emotionalsupport" style={{ ...styles.card, backgroundColor: '#fff3e0' }}>
             <div style={styles.cardIcon}>
               <MessageSquare size={24} color="#ef6c00" />
             </div>
-            <h3 style={styles.cardTitle}>Connect with a Counselor</h3>
+            <h3 style={styles.cardTitle}>Chatbot</h3>
             <p style={styles.cardText}>Chat confidentially with a certified mental health professional.</p>
           </Link>
 
-          <Link to="/mental-wellness-hub" style={{ ...styles.card, backgroundColor: '#fce4ec' }}>
+          <Link to="/mentalhealth" style={{ ...styles.card, backgroundColor: '#fce4ec' }}>
             <div style={styles.cardIcon}>
               <Heart size={24} color="#d81b60" />
             </div>
-            <h3 style={styles.cardTitle}>Mental Wellness Hub</h3>
+            <h3 style={styles.cardTitle}>Mental Health</h3>
             <p style={styles.cardText}>Explore articles and tools to support your mental health.</p>
           </Link>
         </div>

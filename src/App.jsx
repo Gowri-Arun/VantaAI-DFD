@@ -16,9 +16,10 @@ import KnowYourRightsHub from './components/KnowYourRightsHub';
 import LegalComplaints from './components/LegalComplaints';
 import TakeDownRequests from './components/TakeDownRequests';
 import HarassmentDetector from './components/HarrasmentDetector';
+import EmotionalSupport from './components/EmotionalSupport';
 import SilentSOS from './components/SilentSOS';
 import LegalSupportScreen from './components/LegalSupportScreen'; 
-
+import MentalHealth from './components/MentalHealth';
 
 function App() {
   return (
@@ -39,6 +40,8 @@ function App() {
         <Route path="/KnowYourRightsHub" element={<KnowYourRightsHub />} />
         <Route path="/LegalComplaints" element={<LegalComplaints />} />
         <Route path="/TakeDownRequests" element={<TakeDownRequests />} />
+        <Route path="/mentalhealth" element={<MentalHealth/>}/>
+        <Route path="/emotionalsupport" element={<EmotionalSupport/>}/>
         <Route path="/harassment" element={<HarassmentDetector/>}/>
         <Route path="/sos" element={<SilentSOS/>}/>
         <Route path="/legal" element={<LegalSupportScreen />} />
