@@ -13,6 +13,7 @@ import {
   User,
   FileText
 } from 'lucide-react';
+import BottomNav from './BottomNav';
 
 function Dashboard() {
   const { pathname } = useLocation();
@@ -120,21 +121,7 @@ function Dashboard() {
         })}
       </main>
 
-       {/* Bottom Navigation */}
-       <nav style={styles.bottomNav}>
-        {navItems.map((item) => {
-          const NavIcon = item.icon;
-          const isActive = pathname === item.path;
-          return (
-            <Link key={item.path} to={item.path} style={styles.navLink}>
-               <NavIcon size={22} color={isActive ? '#6D28D9' : '#A0AEC0'} strokeWidth={isActive ? 2.5 : 2} />
-               <span style={{...styles.navLabel, color: isActive ? '#6D28D9' : '#A0AEC0' }}>
-                 {item.label}
-               </span>
-            </Link>
-          );
-        })}
-      </nav>
+        <BottomNav/>
     </div>
   );
 }
@@ -223,27 +210,6 @@ const styles = {
     margin: 0,
   },
 
-  bottomNav: {
-    flexShrink: 0, 
-    backgroundColor: 'rgba(255, 255, 255, 0.7)', // Semi-transparent to show gradient through
-    backdropFilter: 'blur(10px)',
-    borderTop: '1px solid #E5E7EB',
-    padding: '8px 0 16px 0',
-    display: 'flex',
-    justifyContent: 'space-around',
-    alignItems: 'center',
-  },
-  navLink: {
-    textDecoration: 'none',
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    gap: '4px',
-  },
-  navLabel: {
-    fontSize: '10px',
-    fontWeight: '500'
-  }
 };
 
 export default Dashboard;
