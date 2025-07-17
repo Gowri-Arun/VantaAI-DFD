@@ -90,7 +90,7 @@ function Dashboard() {
         <h1 style={styles.title}>Vanta AI</h1>
         <div style={styles.profileChip}>
           <User size={16} style={{ color: '#4A5568' }} />
-          <span style={styles.profileName}>Jaseela</span>
+          <span style={styles.profileName}>Profile</span>
         </div>
       </header>
 
@@ -123,15 +123,16 @@ function Dashboard() {
   );
 }
 
-// --- Styles updated for a more seamless Blue & Pink UI ---
+// In Dashboard.js, UPDATE ONLY THE STYLES OBJECT AT THE BOTTOM
+
 const styles = {
   container: {
     height: '100vh',
-    maxHeight: '100dvh', // Use dvh for better mobile browser support
-    overflow: 'hidden',
-    // Added generous bottom padding to make space for the BottomNav
-    padding: '16px 16px 96px 16px',
-    background: 'linear-gradient(180deg, #E0EFFF 0%, #EAE4FF 100%)',
+    maxHeight: '100dvh',
+    overflow: 'hidden', 
+    // Remove bottom padding from the main container
+    padding: '16px 16px 0 16px',
+    background: 'linear-gradient(180deg, #E0EFFF 0%, #EAE4FF 100%)', 
     fontFamily: "'Inter', sans-serif",
     display: 'flex',
     flexDirection: 'column',
@@ -141,7 +142,7 @@ const styles = {
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingBottom: '20px', // Slightly more space below header
+    paddingBottom: '20px',
     flexShrink: 0,
   },
   title: {
@@ -155,7 +156,7 @@ const styles = {
     alignItems: 'center',
     gap: '8px',
     padding: '6px 12px',
-    backgroundColor: 'rgba(255, 255, 255, 0.5)', // Slightly more transparent
+    backgroundColor: 'rgba(255, 255, 255, 0.5)',
     borderRadius: '20px',
     border: '1px solid rgba(255, 255, 255, 0.7)',
   },
@@ -166,36 +167,33 @@ const styles = {
   },
 
   grid: {
-    flexGrow: 1,
+    flexGrow: 1, 
     display: 'grid',
     gridTemplateColumns: 'repeat(2, 1fr)',
-    gap: '16px',
-    overflowY: 'auto', // Allow grid to scroll on smaller screens if content overflows
+    gap: '16px', 
+    overflowY: 'auto', // Grid is scrollable
     minHeight: 0,
-    // Add a little padding at the bottom of the scroll area
-    paddingBottom: '16px',
+    // Add generous bottom padding TO THE GRID.
+    // This ensures the last row of cards isn't hidden by the fixed navbar.
+    paddingBottom: '120px', 
     // Hide scrollbar for a cleaner look
-    msOverflowStyle: 'none',  /* IE and Edge */
-    scrollbarWidth: 'none',  /* Firefox */
-  },
-  // Hides scrollbar for Webkit browsers (Chrome, Safari)
-  '@global': {
-    'styles.grid::-webkit-scrollbar': {
-      display: 'none',
-    },
+    msOverflowStyle: 'none',
+    scrollbarWidth: 'none',
+    '::-webkit-scrollbar': { // For Webkit browsers
+        display: 'none',
+    }
   },
   card: {
-    borderRadius: '20px', // More rounded corners
+    borderRadius: '20px',
     padding: '16px',
     textDecoration: 'none',
     color: 'inherit',
-    // A softer, more diffused shadow
+    background: 'linear-gradient(145deg, rgba(255,255,255,0.9), #F4F6FF)',
     boxShadow: '0 6px 20px rgba(109, 40, 217, 0.08)',
     border: '1px solid rgba(255, 255, 255, 0.6)',
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'center',
-    transition: 'transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out',
   },
   iconContainer: {
     width: '40px',
@@ -204,19 +202,18 @@ const styles = {
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: '12px',
-    // Semi-transparent to blend with card gradient
     backgroundColor: 'rgba(255, 255, 255, 0.7)',
     marginBottom: '12px'
   },
   cardTitle: {
-    fontSize: '15px', // Slightly larger for better readability
+    fontSize: '15px',
     fontWeight: '600',
     fontFamily: "'Lora', serif",
     margin: '0 0 4px 0',
   },
   cardDescription: {
     fontSize: '12px',
-    color: '#64748B', // A softer slate color for description text
+    color: '#64748B',
     lineHeight: '1.5',
     margin: 0,
   },
