@@ -20,6 +20,8 @@ import EmotionalSupport from './components/EmotionalSupport';
 import SilentSOS from './components/SilentSOS';
 import LegalSupportScreen from './components/LegalSupportScreen'; 
 import MentalHealth from './components/MentalHealth';
+import AnonymousReporting from './components/AnonymousReporting';
+
 
 function App() {
   return (
@@ -32,6 +34,7 @@ function App() {
         <Route path="/report" element={<ReportScreen />} />
         <Route path="/support" element={<SupportScreen />} />
 
+        <Route path="/anonymous" element={<AnonymousReporting/>} />
         <Route path="/InAppWarnings" element={<InAppWarnings />} />
         <Route path="/DigitalWatermarking" element={<DigitalWatermarking />} />
         <Route path="/DeepfakeDetection" element={<DeepfakeDetection />} />

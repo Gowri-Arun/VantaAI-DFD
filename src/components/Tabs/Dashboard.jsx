@@ -115,9 +115,6 @@ function Dashboard() {
           );
         })}
       </main>
-
-      {/* Bottom Navigation is expected to be placed here,
-          and the container's padding will prevent overlap */}
       <BottomNav/>
     </div>
   );
