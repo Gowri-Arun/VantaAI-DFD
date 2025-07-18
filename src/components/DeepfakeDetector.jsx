@@ -26,7 +26,7 @@ const DeepfakeDetector = () => {
       const formData = new FormData();
       formData.append("file", uploadedImage);
 
-      const response = await fetch("https://huggingface.co/spaces/MalKG/DFD-backend/analyze", {
+      const response = await fetch("https://MalKG-DFD-Backend.hf.space/analyze", {
         method: "POST",
         body: formData,
       });
