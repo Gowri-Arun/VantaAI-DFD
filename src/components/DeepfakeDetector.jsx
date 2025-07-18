@@ -26,7 +26,7 @@ const DeepfakeDetector = () => {
       const formData = new FormData();
       formData.append("file", uploadedImage);
 
-      const response = await fetch("https://vantaai-dfd-production.up.railway.app/analyze", {
+      const response = await fetch("https://localhost:8000/analyze", {
         method: "POST",
         body: formData,
       });
