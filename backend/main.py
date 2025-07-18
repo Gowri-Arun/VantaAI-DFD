@@ -24,7 +24,7 @@ processor = AutoImageProcessor.from_pretrained(model_name)
 # SerpAPI key for reverse search
 SERPAPI_KEY = "062b122798af0f5049dcc1a946fc077752f90d0fc0c12247accd0d236a0fc20b"  # Replace with actual key
 
-@app.post("/analyze")
+@app.post("/")
 async def analyze_image(file: UploadFile = File(...)):
     image = Image.open(io.BytesIO(await file.read())).convert("RGB")
     inputs = processor(images=image, return_tensors="pt")
