@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import mentalSupportData from "../data/mentalSupportData";
 
-function MentalHealth() {
+function MentalSupport() {
   const [openIndex, setOpenIndex] = useState(null);
 
   const toggle = (index) => {
@@ -104,4 +104,4 @@ function MentalHealth() {
   );
 }
 
-export default MentalHealth;
+export default MentalSupport;

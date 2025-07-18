@@ -21,7 +21,11 @@ import SilentSOS from './components/SilentSOS';
 import LegalSupportScreen from './components/LegalSupportScreen'; 
 import MentalHealth from './components/MentalHealth';
 import AnonymousReporting from './components/AnonymousReporting';
-
+import RightsDetail from "./components/RightsDetail";
+import RealStories from "./components/RealStories";
+import LegalTips from "./components/LegalTips";
+import AwarenessCampaigns from "./components/AwarenessCampaigns";
+import LawyerDirectory from "./components/LawyerDirectory";
 function App() {
   return (
     <Router>
@@ -47,6 +51,12 @@ function App() {
         <Route path="/sos" element={<SilentSOS/>}/>
         <Route path="/anonymous" element={<AnonymousReporting/>}/>
         <Route path="/legal" element={<LegalSupportScreen />} />
+        <Route path="/rights/:section" element={<RightsDetail />} />
+
+          <Route path="/know-your-rights/real-stories" element={<RealStories />} />
+          <Route path="/know-your-rights/legal-tips" element={<LegalTips />} />
+          <Route path="/know-your-rights/awareness-campaigns" element={<AwarenessCampaigns />} />
+          <Route path="/directory" element={<LawyerDirectory />} />
       </Routes>
     </Router>
   );
