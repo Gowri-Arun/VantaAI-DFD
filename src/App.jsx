@@ -21,17 +21,18 @@ import SilentSOS from './components/SilentSOS';
 import LegalSupportScreen from './components/LegalSupportScreen'; 
 import MentalHealth from './components/MentalHealth';
 import AnonymousReporting from './components/AnonymousReporting';
+
 import RightsDetail from "./components/RightsDetail";
 import RealStories from "./components/RealStories";
 import LegalTips from "./components/LegalTips";
 import AwarenessCampaigns from "./components/AwarenessCampaigns";
 import LawyerDirectory from "./components/LawyerDirectory";
+
 function App() {
   return (
     <Router>
       <Routes>
         <Route path="/" element={<Dashboard />} />
-
         <Route path="/prevent" element={<PreventScreen />} />
         <Route path="/detect" element={<DetectScreen />} />
         <Route path="/report" element={<ReportScreen />} />
@@ -42,21 +43,24 @@ function App() {
         <Route path="/DeepfakeDetector" element={<DeepfakeDetector />} />
         <Route path="/ImageScanning" element={<ImageScanning />} />
         <Route path="/LegalChatInterface" element={<LegalChatInterface />} />
-        <Route path="/KnowYourRightsHub" element={<KnowYourRightsHub />} />
         <Route path="/LegalComplaints" element={<LegalComplaints />} />
         <Route path="/TakeDownRequests" element={<TakeDownRequests />} />
-        <Route path="/mentalhealth" element={<MentalHealth/>}/>
-        <Route path="/emotionalsupport" element={<EmotionalSupport/>}/>
-        <Route path="/harassment" element={<HarassmentDetector/>}/>
-        <Route path="/sos" element={<SilentSOS/>}/>
-        <Route path="/anonymous" element={<AnonymousReporting/>}/>
+        <Route path="/mentalhealth" element={<MentalHealth />} />
+        <Route path="/emotionalsupport" element={<EmotionalSupport />} />
+        <Route path="/harassment" element={<HarassmentDetector />} />
+        <Route path="/sos" element={<SilentSOS />} />
+        <Route path="/anonymous" element={<AnonymousReporting />} />
         <Route path="/legal" element={<LegalSupportScreen />} />
-        <Route path="/rights/:section" element={<RightsDetail />} />
 
-          <Route path="/know-your-rights/real-stories" element={<RealStories />} />
-          <Route path="/know-your-rights/legal-tips" element={<LegalTips />} />
-          <Route path="/know-your-rights/awareness-campaigns" element={<AwarenessCampaigns />} />
-          <Route path="/directory" element={<LawyerDirectory />} />
+        <Route path="/KnowYourRightsHub" element={<KnowYourRightsHub />} />
+        <Route path="/rights" element={<KnowYourRightsHub />} /> 
+        <Route path="/rights/:section" element={<RightsDetail />} />
+        <Route path="/know-your-rights/real-stories" element={<RealStories />} />
+        <Route path="/know-your-rights/legal-tips" element={<LegalTips />} />
+        <Route path="/know-your-rights/awareness-campaigns" element={<AwarenessCampaigns />} />
+        <Route path="/directory" element={<LawyerDirectory />} />
+
+        <Route path="*" element={<Dashboard />} />
       </Routes>
     </Router>
   );

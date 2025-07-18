@@ -1,4 +1,13 @@
-import stopHarassmentImg from '../Images/stop_harassment.png';
+import stop_harassment from '../Images/stop_harassment.png';
+import digital_shakti from '../Images/digital_shakti.png';
+import think_before from '../Images/think_before.png';
+import we_think_digital from '../Images/we_think_digital.png';
+import cyber_aware_india from '../Images/cyber_aware_india.png';
+import internet_saathi from '../Images/internet_saathi.png';
+import online_raksha from '../Images/online_raksha.png';
+import red_dot_challenge from '../Images/red_dot_challenge.png';
+import stay_safe_online from '../Images/stay_safe_online.png';
+import cyber_swachhta from '../Images/cyber_swachhta.png';
 const awarenessCampaigns = [
   {
     id: 1,
@@ -7,7 +16,7 @@ const awarenessCampaigns = [
     date: "March 2023",
     organizers: "Cyber Dost (Govt of India)",
     link: "https://cyberdost.gov.in",
-    image: "stopHarassmentImg",
+    image: stop_harassment,
   },
   {
     id: 2,
@@ -16,7 +25,7 @@ const awarenessCampaigns = [
     date: "July 2021",
     organizers: "NCW + Cyber Peace Foundation",
     link: "https://www.cyberpeace.org",
-    image: "/digital_shakti.png",
+    image: digital_shakti,
   },
   {
     id: 3,
@@ -25,7 +34,7 @@ const awarenessCampaigns = [
     date: "Feb 2022",
     organizers: "Meta India",
     link: "https://about.meta.com/india/",
-    image: "/think_before.png",
+    image: think_before,
   },
   {
     id: 4,
@@ -34,7 +43,7 @@ const awarenessCampaigns = [
     date: "Jan 2020",
     organizers: "Meta",
     link: "https://wethinkdigital.in/",
-    image: "/we_think_digital.png",
+    image: we_think_digital,
   },
   {
     id: 5,
@@ -43,7 +52,7 @@ const awarenessCampaigns = [
     date: "Oct 2020",
     organizers: "Ministry of Electronics & IT",
     link: "https://meity.gov.in/content/cyber-aware-india",
-    image: "/cyber_aware_india.png",
+    image: cyber_aware_india,
   },
   {
     id: 6,
@@ -52,7 +61,7 @@ const awarenessCampaigns = [
     date: "2015 - 2022",
     organizers: "Google India & Tata Trusts",
     link: "https://www.google.com/about/main/internet-saathi/",
-    image: "/internet_saathi.png",
+    image: internet_saathi,
   },
   {
     id: 7,
@@ -61,7 +70,7 @@ const awarenessCampaigns = [
     date: "April 2022",
     organizers: "Breakthrough India",
     link: "https://inbreakthrough.org",
-    image: "/online_raksha.png",
+    image: online_raksha,
   },
   {
     id: 8,
@@ -70,7 +79,7 @@ const awarenessCampaigns = [
     date: "Aug 2020",
     organizers: "NGO Collective",
     link: "https://www.instagram.com/explore/tags/reddotchallenge/",
-    image: "/red_dot_challenge.png",
+    image: red_dot_challenge,
   },
   {
     id: 9,
@@ -79,7 +88,7 @@ const awarenessCampaigns = [
     date: "Feb 2023",
     organizers: "Indian Cybercrime Coordination Centre",
     link: "https://www.staysafeonline.in",
-    image: "/stay_safe_online.png",
+    image: stay_safe_online,
   },
   {
     id: 10,
@@ -88,7 +97,7 @@ const awarenessCampaigns = [
     date: "2017 - Present",
     organizers: "CERT-In (Govt of India)",
     link: "https://www.cert-in.org.in",
-    image: "/cyber_swachhta.png",
+    image: cyber_swachhta,
   },
 ];
 
