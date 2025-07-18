@@ -10,7 +10,7 @@ app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://vanta-ai-eight.vercel.app","http://localhost:5173"],  # Change to frontend domain in production
+    allow_origins=["https://vanta-ai-eight.vercel.app","http://localhost:5173",'https://vanta-ai-dfd.vercel.app'],  # Change to frontend domain in production
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
