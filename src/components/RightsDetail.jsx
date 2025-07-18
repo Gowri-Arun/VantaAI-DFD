@@ -6,14 +6,13 @@ function RightsDetail() {
   const { section } = useParams();
   const navigate = useNavigate();
 
-  // ✅ Redirect to /rights if section is invalid
   useEffect(() => {
     if (section !== "laws-&-rights") {
       navigate("/rights", { replace: true });
     }
   }, [section, navigate]);
 
-  // If section is valid, render content
+
   if (section !== "laws-&-rights") return null;
 
   return (
@@ -44,7 +43,7 @@ function RightsDetail() {
             {lawsAndRights.title}
           </h2>
           <button
-            onClick={() => navigate("/rights")}
+            onClick={() => navigate(-1)}
             style={{
               padding: "6px 12px",
               fontSize: "clamp(12px, 2vw, 14px)",
